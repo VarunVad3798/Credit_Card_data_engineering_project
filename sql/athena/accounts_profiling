@@ -1,0 +1,70 @@
+-- ======================================================
+-- Dataset: raw_accounts
+-- ======================================================
+
+SELECT *
+FROM opencard_raw_db.raw_accounts
+LIMIT 10;
+
+SELECT COUNT(*) total_accounts
+FROM opencard_raw_db.raw_accounts;
+
+-- Missing Account IDs
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE account_id IS NULL
+OR TRIM(account_id)='';
+
+-- Duplicate Account IDs
+SELECT
+account_id,
+COUNT(*)
+FROM opencard_raw_db.raw_accounts
+GROUP BY account_id
+HAVING COUNT(*)>1;
+
+-- Missing Customer/Application IDs
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE customer_id IS NULL
+OR application_id IS NULL;
+
+-- Negative Credit Limit
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE credit_limit<0;
+
+-- Negative Balance
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE current_balance<0;
+
+-- Balance exceeds Credit Limit
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE current_balance>credit_limit;
+
+-- Invalid APR
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE apr_percent<0;
+
+-- Invalid Billing Cycle
+SELECT *
+FROM opencard_raw_db.raw_accounts
+WHERE billing_cycle_day<1
+OR billing_cycle_day>28;
+
+-- Status Distribution
+SELECT
+account_status,
+COUNT(*)
+FROM opencard_raw_db.raw_accounts
+GROUP BY account_status;
+
+-- Credit Limit Statistics
+SELECT
+MIN(credit_limit),
+MAX(credit_limit),
+AVG(credit_limit)
+FROM opencard_raw_db.raw_accounts;
