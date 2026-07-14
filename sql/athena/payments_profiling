@@ -1,0 +1,61 @@
+-- ======================================================
+-- Dataset: raw_payments
+-- ======================================================
+
+SELECT *
+FROM opencard_raw_db.raw_payments
+LIMIT 10;
+
+SELECT COUNT(*) total_payments
+FROM opencard_raw_db.raw_payments;
+
+-- Missing Payment IDs
+SELECT *
+FROM opencard_raw_db.raw_payments
+WHERE payment_id IS NULL
+OR TRIM(payment_id)='';
+
+-- Duplicate Payment IDs
+SELECT
+payment_id,
+COUNT(*)
+FROM opencard_raw_db.raw_payments
+GROUP BY payment_id
+HAVING COUNT(*)>1;
+
+-- Missing Account IDs
+SELECT *
+FROM opencard_raw_db.raw_payments
+WHERE account_id IS NULL;
+
+-- Invalid Payment Amount
+SELECT *
+FROM opencard_raw_db.raw_payments
+WHERE payment_amount<=0;
+
+-- Status Distribution
+SELECT
+payment_status,
+COUNT(*)
+FROM opencard_raw_db.raw_payments
+GROUP BY payment_status;
+
+-- Payment Method Distribution
+SELECT
+payment_method,
+COUNT(*)
+FROM opencard_raw_db.raw_payments
+GROUP BY payment_method;
+
+-- Payment Statistics
+SELECT
+MIN(payment_amount),
+MAX(payment_amount),
+AVG(payment_amount)
+FROM opencard_raw_db.raw_payments;
+
+-- Payment Date Range
+SELECT
+MIN(payment_timestamp),
+MAX(payment_timestamp)
+FROM opencard_raw_db.raw_payments;
