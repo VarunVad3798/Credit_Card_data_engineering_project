@@ -1,0 +1,57 @@
+-- ======================================================
+-- Referential Integrity Checks
+-- ======================================================
+
+-- Applications without Customers
+SELECT
+a.application_id,
+a.customer_id
+FROM opencard_raw_db.raw_applications a
+LEFT JOIN opencard_raw_db.raw_customers c
+ON a.customer_id=c.customer_id
+WHERE c.customer_id IS NULL;
+
+-- Decisions without Applications
+SELECT
+d.decision_id,
+d.application_id
+FROM opencard_raw_db.raw_credit_decisions d
+LEFT JOIN opencard_raw_db.raw_applications a
+ON d.application_id=a.application_id
+WHERE a.application_id IS NULL;
+
+-- Accounts without Applications
+SELECT
+ac.account_id,
+ac.application_id
+FROM opencard_raw_db.raw_accounts ac
+LEFT JOIN opencard_raw_db.raw_applications a
+ON ac.application_id=a.application_id
+WHERE a.application_id IS NULL;
+
+-- Accounts without Customers
+SELECT
+ac.account_id,
+ac.customer_id
+FROM opencard_raw_db.raw_accounts ac
+LEFT JOIN opencard_raw_db.raw_customers c
+ON ac.customer_id=c.customer_id
+WHERE c.customer_id IS NULL;
+
+-- Transactions without Accounts
+SELECT
+t.transaction_id,
+t.account_id
+FROM opencard_raw_db.raw_transactions t
+LEFT JOIN opencard_raw_db.raw_accounts a
+ON t.account_id=a.account_id
+WHERE a.account_id IS NULL;
+
+-- Payments without Accounts
+SELECT
+p.payment_id,
+p.account_id
+FROM opencard_raw_db.raw_payments p
+LEFT JOIN opencard_raw_db.raw_accounts a
+ON p.account_id=a.account_id
+WHERE a.account_id IS NULL;
