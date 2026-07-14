@@ -1,0 +1,92 @@
+-- ======================================================
+-- Dataset: raw_credit_decisions
+-- ======================================================
+
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+LIMIT 10;
+
+SELECT COUNT(*) total_records
+FROM opencard_raw_db.raw_credit_decisions;
+
+-- Missing Decision IDs
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE decision_id IS NULL
+OR TRIM(decision_id)='';
+
+-- Duplicate Decision IDs
+SELECT
+decision_id,
+COUNT(*)
+FROM opencard_raw_db.raw_credit_decisions
+GROUP BY decision_id
+HAVING COUNT(*)>1;
+
+-- Missing Application IDs
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE application_id IS NULL
+OR TRIM(application_id)='';
+
+-- Invalid FICO Score
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE fico_score<300
+OR fico_score>850;
+
+-- Invalid Debt to Income Ratio
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE debt_to_income_ratio<0
+OR debt_to_income_ratio>1;
+
+-- Invalid Credit Utilization
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE credit_utilization_ratio<0
+OR credit_utilization_ratio>1;
+
+-- Negative Inquiries
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE recent_credit_inquiries<0;
+
+-- Negative Delinquencies
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE delinquency_count_24m<0;
+
+-- Decision Distribution
+SELECT
+decision_status,
+COUNT(*)
+FROM opencard_raw_db.raw_credit_decisions
+GROUP BY decision_status;
+
+-- Risk Band Distribution
+SELECT
+risk_band,
+COUNT(*),
+AVG(fico_score)
+FROM opencard_raw_db.raw_credit_decisions
+GROUP BY risk_band;
+
+-- Approved with Zero Limit
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE decision_status='APPROVED'
+AND approved_credit_limit<=0;
+
+-- Declined with Positive Limit
+SELECT *
+FROM opencard_raw_db.raw_credit_decisions
+WHERE decision_status='DECLINED'
+AND approved_credit_limit>0;
+
+-- Decision Reason Distribution
+SELECT
+decision_reason_code,
+COUNT(*)
+FROM opencard_raw_db.raw_credit_decisions
+GROUP BY decision_reason_code;
