@@ -1,0 +1,77 @@
+-- ======================================================
+-- Project: AWS Credit Card Data Engineering Pipeline
+-- Service: Amazon Athena
+-- Dataset: raw_applications
+-- Purpose: Raw Data Profiling
+-- ======================================================
+
+-- Preview records
+SELECT *
+FROM opencard_raw_db.raw_applications
+LIMIT 10;
+
+-- Total records
+SELECT COUNT(*) AS total_applications
+FROM opencard_raw_db.raw_applications;
+
+-- Missing Application IDs
+SELECT *
+FROM opencard_raw_db.raw_applications
+WHERE application_id IS NULL
+   OR TRIM(application_id)='';
+
+-- Duplicate Application IDs
+SELECT
+    application_id,
+    COUNT(*) AS duplicate_count
+FROM opencard_raw_db.raw_applications
+GROUP BY application_id
+HAVING COUNT(*)>1;
+
+-- Missing Customer IDs
+SELECT *
+FROM opencard_raw_db.raw_applications
+WHERE customer_id IS NULL
+   OR TRIM(customer_id)='';
+
+-- Invalid Requested Credit Limit
+SELECT *
+FROM opencard_raw_db.raw_applications
+WHERE requested_credit_limit<=0;
+
+-- Application Status Distribution
+SELECT
+application_status,
+COUNT(*) AS total
+FROM opencard_raw_db.raw_applications
+GROUP BY application_status
+ORDER BY total DESC;
+
+-- Channel Distribution
+SELECT
+application_channel,
+COUNT(*) AS total
+FROM opencard_raw_db.raw_applications
+GROUP BY application_channel
+ORDER BY total DESC;
+
+-- Product Distribution
+SELECT
+product_code,
+COUNT(*) AS total
+FROM opencard_raw_db.raw_applications
+GROUP BY product_code
+ORDER BY total DESC;
+
+-- Requested Credit Limit Statistics
+SELECT
+MIN(requested_credit_limit) minimum_limit,
+MAX(requested_credit_limit) maximum_limit,
+AVG(requested_credit_limit) average_limit
+FROM opencard_raw_db.raw_applications;
+
+-- Application Date Range
+SELECT
+MIN(application_timestamp),
+MAX(application_timestamp)
+FROM opencard_raw_db.raw_applications;
