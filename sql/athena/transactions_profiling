@@ -1,0 +1,77 @@
+-- ======================================================
+-- Dataset: raw_transactions
+-- ======================================================
+
+SELECT *
+FROM opencard_raw_db.raw_transactions
+LIMIT 10;
+
+SELECT COUNT(*) total_transactions
+FROM opencard_raw_db.raw_transactions;
+
+-- Missing Transaction IDs
+SELECT *
+FROM opencard_raw_db.raw_transactions
+WHERE transaction_id IS NULL
+OR TRIM(transaction_id)='';
+
+-- Duplicate Transaction IDs
+SELECT
+transaction_id,
+COUNT(*)
+FROM opencard_raw_db.raw_transactions
+GROUP BY transaction_id
+HAVING COUNT(*)>1;
+
+-- Missing Account IDs
+SELECT *
+FROM opencard_raw_db.raw_transactions
+WHERE account_id IS NULL;
+
+-- Transaction Type Distribution
+SELECT
+transaction_type,
+COUNT(*)
+FROM opencard_raw_db.raw_transactions
+GROUP BY transaction_type;
+
+-- Status Distribution
+SELECT
+transaction_status,
+COUNT(*)
+FROM opencard_raw_db.raw_transactions
+GROUP BY transaction_status;
+
+-- Currency Distribution
+SELECT
+currency,
+COUNT(*)
+FROM opencard_raw_db.raw_transactions
+GROUP BY currency;
+
+-- Merchant Category Distribution
+SELECT
+merchant_category,
+COUNT(*)
+FROM opencard_raw_db.raw_transactions
+GROUP BY merchant_category
+ORDER BY COUNT(*) DESC;
+
+-- Purchase/Cash Advance with Negative Amount
+SELECT *
+FROM opencard_raw_db.raw_transactions
+WHERE transaction_type IN ('PURCHASE','CASH_ADVANCE')
+AND amount<=0;
+
+-- Refund with Positive Amount
+SELECT *
+FROM opencard_raw_db.raw_transactions
+WHERE transaction_type='REFUND'
+AND amount>0;
+
+-- Transaction Amount Statistics
+SELECT
+MIN(amount),
+MAX(amount),
+AVG(amount)
+FROM opencard_raw_db.raw_transactions;
